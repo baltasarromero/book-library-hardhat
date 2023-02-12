@@ -1,3 +1,6 @@
+import { config as dotEnvConfig } from "dotenv";
+dotEnvConfig();
+
 import { HardhatUserConfig, task, subtask } from "hardhat/config";
 import "@nomicfoundation/hardhat-toolbox";
 
@@ -16,42 +19,39 @@ const config: HardhatUserConfig = {
     },
     compilers: [
       {
-        version: "0.8.7",
-      },
-      {
         version: "0.8.17",
       },
     ],
   },
-  defaultNetwork: "hardhat",
   networks: {
     // Goerli Testnet
     goerli: {
-      url: "https://goerli.infura.io/v3/25ac813a98f649fa9535eb1e18a796c4",
+      url: process.env.INFURA_GOERLI_URL || "",
       chainId: 5,
       accounts: [
-        
+      ],
+    },
+    sepolia: {
+      url: process.env.INFURA_SEPOLIA_URL || "",
+      chainId: 11155111,
+      accounts: [
       ],
     },
   },
   etherscan: {
     // Your API key for Etherscan
     // Obtain one at <https://etherscan.io/>
-    apiKey: "",
-  },
+    apiKey: process.env.ETHERSCAN_API_KEY || ""
+  }
 };
 
-task("deploy", "Deploys contracts").setAction(async () => {
-  const { main } = await lazyImport("./scripts/deploy-election");
-  await main();
-});
 
-task("deploy-with-pk", "Deploys contract with pk")
+task("deploy-with-pk-to-selected-network", "Deploys contract with pk")
   .addParam("privateKey", "Please provide the private key")
-  .setAction(async ({ privateKey }) => {
-    const { main } = await lazyImport("./scripts/deploy-pk");
+  .setAction(async ({ privateKey}) => {
+    const { main } = await lazyImport("./scripts/deploy-book-library-with-pk-to-selected-network");
     await main(privateKey);
-  });
+  });  
 
 subtask("print", "Prints a message")
   .addParam("message", "The message to print")

@@ -1,5 +1,4 @@
 import { ethers } from "hardhat";
-import { InfuraProvider } from "@ethersproject/providers"; 
 import hre from 'hardhat';
 
 export async function main( _privateKey: string) {

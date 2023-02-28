@@ -1,7 +1,7 @@
 import dotenv from "dotenv";
 dotenv.config({ path: "../.env" });
 
-const BookLibraryArtifact = require("../artifacts/contracts/BookLibrary.sol/BookLibrary.json");
+const BookLibraryArtifact = require("../artifacts/contracts/BookLibraryWithToken.sol/BookLibraryWithToken.json");
 
 import { BigNumber, Contract, Wallet } from "ethers";
 import { BookLibrary } from "../typechain-types";
@@ -43,7 +43,7 @@ async function checkAllBooks() {
     }
 }
 
-async function borrowBook(title: string, wallet: Wallet) {
+/* async function borrowBook(title: string, wallet: Wallet) {
     const borrowTransaction: ContractTransaction = await bookLibrary.connect(wallet).borrowBook(title);
     const borrowTransactionReceipt: ContractReceipt = await borrowTransaction.wait();
 
@@ -51,7 +51,7 @@ async function borrowBook(title: string, wallet: Wallet) {
         console.log("Borrow transaction was not successful");
     }
 }     
-
+ */
 async function hasBorrowedBook(    borrower: Wallet,
     title: string
 ) {
@@ -97,10 +97,10 @@ async function isBookAvailable(title: string) {
 }
 
 const interactionWithContract = async function () {
-    const provider: InfuraProvider = new InfuraProvider("goerli", process.env.INFURA_PROJECT_ID);
+    const provider: InfuraProvider = new InfuraProvider("sepolia", process.env.INFURA_PROJECT_ID);
 
     const wallet1: Wallet = new Wallet(
-        process.env.GOERLI_WALLET_1_PK || "",
+        process.env.SEPOLIA_WALLET_ACCOUNT_2 || "",
         provider
     );
 
@@ -110,16 +110,16 @@ const interactionWithContract = async function () {
     );
 
     bookLibrary = <BookLibrary> new Contract(
-        process.env.BOOK_LIBRARY_GOERLI_ADDRESS || "",
+        process.env.SEPOLIA_BOOK_LIBRARY_WITH_TOKEN_ADDRESS || "",
         BookLibraryArtifact.abi,
         wallet1
     );
 
     // add first book
-    await addBook(FIRST_BOOK_TITLE);
+    //await addBook(FIRST_BOOK_TITLE);
 
     // add second book
-    await addBook(SECOND_BOOK_TITLE);
+    //await addBook(SECOND_BOOK_TITLE);
 
     // Check all available books
     await checkAllBooks();
@@ -129,20 +129,20 @@ const interactionWithContract = async function () {
     await isBookAvailable(FIRST_BOOK_TITLE);
 
     // Borrow a book
-    await borrowBook(FIRST_BOOK_TITLE, wallet2);
+    //await borrowBook(FIRST_BOOK_TITLE, wallet2);
 
     // Check that it is borrowed
-    await hasBorrowedBook(wallet2, FIRST_BOOK_TITLE);
+    await hasBorrowedBook(wallet1, FIRST_BOOK_TITLE);
 
     // Check the availability of the book after borrowing
-    await isBookAvailable(FIRST_BOOK_TITLE);
+    //await isBookAvailable(FIRST_BOOK_TITLE);
     
     // Return the book
-    await returnBook(wallet2, FIRST_BOOK_TITLE);
+    //await returnBook(wallet2, FIRST_BOOK_TITLE);
 
     // Check the availability of the books after returning book 1
-    await isBookAvailable(FIRST_BOOK_TITLE);
-    await isBookAvailable(SECOND_BOOK_TITLE);    
+    //await isBookAvailable(FIRST_BOOK_TITLE);
+    //await isBookAvailable(SECOND_BOOK_TITLE);    
 
 };
 

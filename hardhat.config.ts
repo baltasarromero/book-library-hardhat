@@ -54,6 +54,28 @@ task("deploy-with-pk-to-selected-network", "Deploys contract with pk")
     await main(privateKey);
   });  
 
+task("deploy-library-token", "Deploys contract with pk")
+  .addParam("privateKey", "Please provide the private key")
+  .setAction(async ({ privateKey}) => {
+    const { main } = await lazyImport("./scripts/deploy-library-token");
+    await main(privateKey);
+  });    
+
+task("deploy-permit-library", "Deploys contract with pk")
+  .addParam("privateKey", "Please provide the private key")
+  .setAction(async ({ privateKey}) => {
+    const { main } = await lazyImport("./scripts/deploy-permit-library");
+    await main(privateKey);
+  });    
+  
+task("deploy-book-library-with-token", "Deploys contract with pk")
+  .addParam("privateKey", "Please provide the private key")
+  .setAction(async ({ privateKey}) => {
+    const { main } = await lazyImport("./scripts/deploy-book-library-with-lib-token-permits");
+    await main(privateKey);
+  });    
+
+
 subtask("print", "Prints a message")
   .addParam("message", "The message to print")
   .setAction(async (taskArgs) => {

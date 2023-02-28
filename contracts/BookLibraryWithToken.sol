@@ -17,7 +17,7 @@ import "./Lib.sol";
 	@dev Removing books from the library is not a requirement
 	@author Baltasar Romero
 */
-contract BookLibrary is Ownable {
+contract BookLibraryWithToken is Ownable {
     ///	@dev Struct that defines the book information. In includes the following data: the Title of the book, the number of copies currently available in the library, Array with addresses of the borrowers (notice this won't be unique).
     struct Book {
         string title;
@@ -45,6 +45,11 @@ contract BookLibrary is Ownable {
     event BookBorrowed(string title, address borrower, uint256 availableCopies);
     /// @dev Emmited when a copy of a book is returned to the library
     event BookReturned(string title, address borrower, uint256 availableCopies);
+
+
+    constructor(address libraryTokenWithPermitsAddress)  {
+        libraryToken = Lib(libraryTokenWithPermitsAddress);
+    }
 
     /**
      * @dev this is used to validate that a book that is being added to the library has a valid title. THe title should not be empty     .
@@ -140,14 +145,13 @@ contract BookLibrary is Ownable {
         emit BookBorrowed(_title, msg.sender, book.copies);
     }
 
-
-    function borrowBook(bytes32 bookId, uint256 value, uint256 deadline, uint8 v, bytes32 r, bytes32 s) public {    
+    function borrowBookWithPermit(bytes32 bookId, uint256 value, uint256 deadline, uint8 v, bytes32 r, bytes32 s) public {    
         Book storage book = books[bookId];
         // borrow price is hardcoded for the moment
         uint borrowPrice = 1000000;
         
         // Book must have copies
-        require(book.copies > 0, "There is no copies.");
+        require(book.copies > 0, "There are no copies.");
         
         require(!borrowedBook[msg.sender][bookId], "This book is already taken!");
         Lib(libraryToken).permit(msg.sender, address(this), value, deadline, v,r,s);    
